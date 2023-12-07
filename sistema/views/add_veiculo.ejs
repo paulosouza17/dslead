@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('header.ejs') %>
+</head>
+
+<body>
+    <%- include('navbar.ejs') %>
+
+        <div class="container">
+            <div class="row">
+                <!-- Menu Lateral -->
+
+                <div class="col-lg-3">
+                    <%- include('menu.ejs') %>
+                </div>
+
+                <!-- Formulário de Registro -->
+
+                <div class="col-lg-9">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">Cadastrar Veículo</div>
+                        <div class="card-body">
+                            <form id="editForm" action="register" method="post">
+                                <div class="form-group">
+                                    <label>Nome</label>
+                                    <input type="text" class="form-control" name="nome" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nome Fantasia</label>
+                                    <input type="text" class="form-control" name="nome_fantasia">
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" class="form-control" name="email">
+                                </div>
+                                <div class="form-group">
+                                    <label>CNPJ</label>
+                                    <input type="text" class="form-control" name="cnpj">
+                                </div>
+                                <div class="form-group">
+                                    <label>Telefone</label>
+                                    <input type="text" class="form-control" name="telefone">
+                                </div>
+                                <div class="form-group">
+                                    <label>Nome do Responsável</label>
+                                    <input type="text" class="form-control" name="nome_responsavel">
+                                </div>
+                                <div class="form-group">
+                                    <label>Telefone do Responsável</label>
+                                    <input type="text" class="form-control" name="telefone_responsavel">
+                                </div>
+                                <div class="form-group">
+                                    <label>Email do Responsável</label>
+                                    <input type="text" class="form-control" name="email_responsavel">
+                                </div>
+                                <div class="form-group">
+                                    <label>Hash</label>
+                                    <input type="text" class="form-control" name="hash">
+                                </div>
+                                <div class="form-group">
+                                    <label>IP VPS</label>
+                                    <input type="text" class="form-control" name="ip_vps">
+                                </div>
+                                <div class="form-group">
+                                    <label>Status da Conta</label>
+                                    <select class="form-control" name="status" required>
+                                        <option value="ativo">Ativo</option>
+                                        <option value="implementando">Implementando</option>
+                                        <option value="inativo">Inativo</option>
+                                        <option value="encerrado">Encerrado</option>
+                                    </select>
+                                </div>
+                                <button id="updateButton" type="submit" class="btn btn-primary">Cadastrar</button>
+                            </form>
+
+                            <!-- Botão para Excluir o Veículo -->
+                            <!-- <button id="deleteButton" class="btn btn-danger mt-3">Excluir Veículo</button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="alertContainer" class="alert-container"></div>
+
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(function () {
+                // Captura o evento de envio do formulário
+                $('#myForm').submit(function (event) {
+                    event.preventDefault(); // Evita o envio tradicional do formulário
+
+                    var formData = $(this).serialize(); // Serializa os dados do formulário
+
+                    // Envia a requisição AJAX
+                    $.ajax({
+                        url: $(this).attr('action'),
+                        type: 'POST',
+                        data: formData,
+                        success: function (response) {
+                            showResponseMessage(response.message, 'success');
+                            window.location.href = '/veiculo';
+                            // Outras ações após o sucesso
+                        },
+                        error: function (xhr, status, error) {
+                            showResponseMessage(xhr.responseJSON.error, 'error');
+                            window.location.href = '/veiculo';
+                            // Outras ações após o erro
+                        }
+                    });
+                });
+
+                function showResponseMessage(message, type) {
+                    var alertClass = (type === 'success') ? 'alert-success' : 'alert-danger';
+
+                    var alertMessage = $('<div>').addClass('alert ' + alertClass)
+                        .text(message)
+                        .css({
+                            'position': 'fixed',
+                            'bottom': '20px',
+                            'left': '20px',
+                            'right': '20px',
+                            'z-index': '9999',
+                            'margin-bottom': '20px'
+                        })
+                        .appendTo('#alertContainer');
+
+                    // Desaparece gradativamente após 4 segundos
+                    alertMessage.delay(4000).fadeOut(1000, function () {
+                        $(this).remove();
+                    });
+                }
+            });
+        </script>
+</body>
+
+</html>

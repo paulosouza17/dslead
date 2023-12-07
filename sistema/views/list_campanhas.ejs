@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('header.ejs') %>
+</head>
+
+<body>
+    <%- include('navbar.ejs') %>
+
+    <div class="container">
+        <div class="row">
+            <!-- Menu Lateral -->
+            <div class="col-lg-3">
+                <%- include('menu.ejs') %>
+            </div>
+
+            <!-- Formulário de Registro -->
+            <div class="col-lg-9">
+                <div class="card-header bg-info text-white">Campanhas</div>
+                <ul class="nav nav-tabs" id="myTabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="allTab" data-toggle="tab" href="#all">Todas as Campanhas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="trueTab" data-toggle="tab" href="#trueStatus">Campanhas Ativas</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade" id="trueStatus">
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome da Campanha</th>
+                                            <th></th>
+                                            <th>Editar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% campanhas.filter(function(campanha) { return campanha.status === true; }).forEach(function(campanha) { %>
+                                            <tr>
+                                                <td><%= campanha.campanha %></td>
+                                                <td><span class="status-dot <%= campanha.status %>"></span></td>
+                                                <td><a href="/campanhas/edit/<%= campanha.id_campanha %>" class="btn btn-primary btn-sm me-2"><i class="bi bi-pencil-fill"></i></a></td>
+                                            </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade show active" id="all">
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome da Campanha</th>
+                                            <th></th>
+                                            <th>Editar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% campanhas.forEach(function(campanha) { %>
+                                            <tr>
+                                                <td><%= campanha.campanha %></td>
+                                                <td><span class="status-dot <%= campanha.status %>"></span></td>
+                                                <td><a href="/campanhas/edit/<%= campanha.id_campanha %>" class="btn btn-primary btn-sm me-2"><i class="bi bi-pencil-fill"></i></a></td>
+                                            </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts Bootstrap e jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#menuContainer").load("menu.html");
+        });
+    </script>
+</body>
+
+</html>

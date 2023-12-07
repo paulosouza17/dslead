@@ -1,0 +1,82 @@
+<div class="list-group">
+    <a href="/" class="list-group-item list-group-item-action <%= page === 'home' ? 'active' : '' %>">
+        <i class="fas fa-home"></i> Dashboard
+    </a>
+    <div class="dropdown">
+        <a href="/veiculos" class="list-group-item list-group-item-action <%= page.includes('veiculos') ? 'active' : '' %>">
+            <i class="fas fa-tv mr-2 "></i> Veículos
+        </a>
+        <div class="dropdown-content">
+            <a href="/veiculos/add" class="<%= page === 'veiculos/add' ? 'active' : '' %>"><i class="fas fa-plus"></i> Adicionar Veículo</a>
+            <a href="/veiculos/" class="<%= page === 'veiculos/' ? 'active' : '' %>"><i class="fas fa-list"></i> Listar Veículos</a>
+        </div>
+    </div>
+    <div class="dropdown">
+        <!-- <a href="/anunciantes" class="list-group-item list-group-item-action <%= page.includes('anunciantes') ? 'active' : '' %>" disabled>
+            <i class="fas fa-ad mr-2"></i> Anunciantes
+        </a>
+        
+        
+        <div class="dropdown-content">
+            <a href="/anunciantes/add" class="<%= page === 'anunciantes/add' ? 'active' : '' %>"><i class="fas fa-plus"></i> Adicionar Anunciante</a>
+            <a href="/anunciantes/" class="<%= page === 'anunciantes/' ? 'active' : '' %>"><i class="fas fa-list"></i> Listar Anunciantes</a>
+        </div> -->
+    </div>
+    <div class="dropdown">
+        <a href="/vps" class="list-group-item list-group-item-action <%= page.includes('vps') ? 'active' : '' %>">
+            <i class="fas fa-server mr-2 "></i> VPS
+        </a>
+        <div class="dropdown-content">
+            <a href="/vps/add" class="<%= page === 'vps/add' ? 'active' : '' %>"><i class="fas fa-plus"></i> Adicionar VPS</a>
+            <a href="/vps/" class="<%= page === 'vps/' ? 'active' : '' %>"><i class="fas fa-list"></i> Listar VPS</a>
+        </div>
+    </div>
+    <div class="dropdown">
+        <a href="/campanhas" class="list-group-item list-group-item-action <%= page.includes('campanhas') ? 'active' : '' %>">
+            <i class="fas fa-bullseye "></i>  Campanhas
+        </a>
+        <div class="dropdown-content">
+            <a href="/campanhas/add" class="<%= page === 'campanhas/add' ? 'active' : '' %>"><i class="fas fa-plus"></i> Adicionar Campanha</a>
+            <a href="/campanhas/" class="<%= page === 'campanhas/' ? 'active' : '' %>"><i class="fas fa-list"></i> Listar Campanhas</a>
+            <!-- <a href="/usuarios/" class="<%= page === 'usuarios/' ? 'active' : '' %>"><i class="fas fa-list"></i> Listar Usuários</a> -->
+        </div>
+    </div>
+    <a href="" class="list-group-item list-group-item-action <%= page === 'configuracoes' ? 'active' : '' %>">
+        <i class="fas fa-comment mr-2"></i> Tickets
+    </a>
+    <a href="" class="list-group-item list-group-item-action <%= page === 'configuracoes' ? 'active' : '' %>">
+        <i class="fas fa-cogs mr-2"></i> Configurações
+    </a>
+    <!-- Mais links do menu aqui -->
+</div>
+
+<style>
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+    
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+    
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+    
+    .active {
+        background-color: #f1f1f1;
+    }
+</style>

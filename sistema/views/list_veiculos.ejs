@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('header.ejs') %>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css">
+    <style>
+        .card-text.status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 5px;
+            position: relative;
+            top: 2px;
+        }
+
+        .active  {
+            background-color: green;
+        }
+
+        .implementando {
+            background-color: blue;
+        }
+
+        .inativo {
+            background-color: red;
+        }
+
+        .encerrado  {
+            background-color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('navbar.ejs') %>
+
+    <div class="container">
+        <div class="row">
+            <!-- Menu Lateral -->
+            <div class="col-lg-3">
+                <%- include('menu.ejs') %>
+            </div>
+
+            <!-- Lista de Veículos -->
+            <div class="col-lg-9">
+                <div class="card">
+                    <div class="card-header bg-info text-white">Lista de Veículos</div>
+                    <div class="card-body">
+                        <div class="list-group">
+                            <% veiculos.forEach(function(veiculo) { %>
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><%= veiculo.nome %></h5>
+                                        <p class="card-text mb-2"><%= veiculo.descricao %></p>
+                                        <small class="card-text status">
+                                            <span class="status-dot <%= veiculo.statusClass %>"></span>
+                                            <%= veiculo.status %>
+                                        </small>
+                                        <div class="mt-2">
+                                            <a href="/veiculos/edit/<%= veiculo.id %>" class="btn btn-primary btn-sm me-2"><i class="bi bi-pencil-fill"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts Bootstrap e jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+    <script async>
+        $(function () {
+            $("#menuContainer").load("menu.html");
+
+            // Atualização do status do veículo
+            veiculos.forEach(function (veiculo) {
+                var statusClass = '';
+                var statusDotColor = '';
+
+                switch (veiculo.status) {
+                    case 'ativo':
+                        statusClass = 'ativo';
+                        statusDotColor = 'green';
+                        break;
+                    case 'implementando':
+                        statusClass = 'implementando';
+                        statusDotColor = 'blue';
+                        break;
+                    case 'inativo':
+                        statusClass = 'inativo';
+                        statusDotColor = 'red';
+                        break;
+                    case 'encerrado':
+                        statusClass = 'encerrado';
+                        statusDotColor = 'black';
+                        break;
+                    default:
+                        statusClass = '';
+                        statusDotColor = 'gray';
+                        break;
+                }
+
+                var card = $('<div>').addClass('card mb-3');
+                var cardBody = $('<div>').addClass('card-body');
+                var cardTitle = $('<h5>').addClass('card-title').text(veiculo.nome);
+                var cardText = $('<p>').addClass('card-text mb-2').text(veiculo.descricao);
+                var statusContainer = $('<small>').addClass('card-text status ' + statusClass);
+                var statusDot = $('<span>').addClass('status-dot').css('background-color', statusDotColor);
+                var statusText = $('<span>').text(veiculo.status);
+
+                statusContainer.append('Status: ', statusDot, statusText);
+                cardBody.append(cardTitle, cardText, statusContainer);
+
+                var buttonContainer = $('<div>').addClass('mt-2');
+                var editButton = $('<a>').attr('href', '/veiculos/edit/' + veiculo.id).addClass('btn btn-primary btn-sm me-2').text('Editar');
+                var deleteButton = $('<button>').addClass('btn btn-danger btn-sm').text('Excluir').on('click', function () {
+                    deleteVeiculo(veiculo.id);
+                });
+
+                buttonContainer.append(editButton, deleteButton);
+                cardBody.append(buttonContainer);
+                card.append(cardBody);
+
+                $('.list-group').append(card);
+            });
+        });
+
+        function deleteVeiculo(veiculoId) {
+            if (confirm('Tem certeza que deseja excluir este veículo?')) {
+                $.ajax({
+                    url: '/veiculos/delete/' + veiculoId,
+                    type: 'POST',
+                    success: function (response) {
+                        alert(response.message);
+                        location.reload();
+                    },
+                    error: function (xhr, status, error) {
+                        alert(xhr.responseJSON.error);
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>

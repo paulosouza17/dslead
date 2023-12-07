@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('header.ejs') %>
+</head>
+
+<body>
+    <%- include('navbar.ejs') %>
+
+
+    <div class="row">
+        <!-- Menu Lateral -->
+
+        <div class="col-lg-3">
+            <%- include('menu.ejs') %>
+        </div>
+
+        <!-- Formulário de Registro -->
+        <div class="col-lg-9">
+            <div class="card">
+                <div class="card-header bg-info text-white">Registro de VPS</div>
+                <div class="card-body">
+                    <form id="myForm" action="register" method="post">
+                        <div class="form-group">
+                            <label>Identificação</label>
+                            <input type="text" class="form-control" name="nome" required>
+                        </div>
+                        <div class="form-group">
+                            <label>IP</label>
+                            <input type="text" class="form-control" name="ip">
+                        </div>
+                        <div class="form-group">
+                            <label>hash</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="hash" id="hashInput" required>
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="generateHash()">Gerar</button>
+                                    <button type="button" class="btn btn-secondary" onclick="copyHash()"
+                                        data-toggle="tooltip" data-placement="top"
+                                        title="Copiar para a área de transferência" id="copyButton">Copiar</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Status da Conta</label>
+                            <select class="form-control" name="status" required>
+                                <option value="ativo">Ativo</option>
+                                <option value="implementando">Implementando</option>
+                                <option value="inativo">Inativo</option>
+                                <option value="encerrado">Encerrado</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Registrar</button>
+                    </form>
+                </div>
+            </div>
+
+            <script>
+                function generateHash() {
+                    var randomHash = generateRandomHash();
+                    document.getElementById("hashInput").value = randomHash;
+                }
+
+                function copyHash() {
+                    var hashInput = document.getElementById("hashInput");
+                    hashInput.select();
+                    document.execCommand("copy");
+
+                    var copyButton = document.getElementById("copyButton");
+                    copyButton.setAttribute("data-original-title", "Copiado para a área de transferência");
+                    $(copyButton).tooltip("show");
+                    setTimeout(function () {
+                        $(copyButton).tooltip("hide");
+                    }, 2000);
+                }
+
+                function generateRandomHash() {
+                    var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                    var length = 32;
+                    var randomHash = "";
+                    for (var i = 0; i < length; i++) {
+                        randomHash += characters.charAt(Math.floor(Math.random() * characters.length));
+                    }
+                    return randomHash;
+                }
+            </script>
+
+
+
+        </div>
+    </div>
+
+
+    <div id="alertContainer" class="alert-container"></div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(function () {
+            // Captura o evento de envio do formulário
+            $('#myForm').submit(function (event) {
+                event.preventDefault(); // Evita o envio tradicional do formulário
+
+                var formData = $(this).serialize(); // Serializa os dados do formulário
+
+                // Envia a requisição AJAX
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        showResponseMessage(response.message, 'success');
+                        window.location.href = '/vps';
+                        // Outras ações após o sucesso
+                    },
+                    error: function (xhr, status, error) {
+                        showResponseMessage(xhr.responseJSON.error, 'error');
+                        window.location.href = '/vps';
+                        // Outras ações após o erro
+                    }
+                });
+            });
+
+            function showResponseMessage(message, type) {
+                var alertClass = (type === 'success') ? 'alert-success' : 'alert-danger';
+
+                var alertMessage = $('<div>').addClass('alert ' + alertClass)
+                    .text(message)
+                    .css({
+                        'position': 'fixed',
+                        'bottom': '20px',
+                        'left': '20px',
+                        'right': '20px',
+                        'z-index': '9999',
+                        'margin-bottom': '20px'
+                    })
+                    .appendTo('#alertContainer');
+
+                // Desaparece gradativamente após 4 segundos
+                alertMessage.delay(4000).fadeOut(1000, function () {
+                    $(this).remove();
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

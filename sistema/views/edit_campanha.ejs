@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('header.ejs') %>
+</head>
+
+<body>
+    <%- include('navbar.ejs') %>
+
+        <div class="container">
+            <div class="row">
+                <!-- Menu Lateral -->
+                <div class="col-lg-3">
+                    <%- include('menu.ejs') %>
+                </div>
+
+                <!-- Formulário de Edição da Campanha -->
+                <div class="col-lg-9">
+                    <h2>Editar Campanha</h2>
+                    <div class="card">
+                        <div class="card-header bg-info text-white">Informações Gerais</div>
+                        <div class="card-body">
+                            <form id="editForm" action="/campanhas/update/<%= campanha.id_campanha %>" method="post">
+                                <div class="form-group">
+                                    <label>Nome da Campanha</label>
+                                    <input disabled type="text" class="form-control" name="campanha"
+                                        value="<%= campanha.campanha %>">
+                                </div>
+                                <div class="form-group">
+                                    <label>Nome do Cliente</label>
+                                    <input disabled type="text" class="form-control" name="nome_cliente"
+                                        value="<%= cliente.nome_cliente %>">
+                                </div>
+                                <div class="form-group">
+                                    <label>Status de Campanha</label>
+                                    <select class="form-control" name="status">
+                                        <option value="" disabled hidden>Escolha o status</option>
+                                        <option value="true" <%=campanha.status===true ? "selected" : "" %>>Ativa
+                                        </option>
+                                        <option value="false" <%=campanha.status===false ? "selected" : "" %>>Inativa
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Escolha o Gatilho</label>
+                                    <select class="form-control gatilho" name="gatilho">
+                                        <option value="" disabled hidden>Selecione uma opção</option>
+                                        <option value="0" <%=campanha.gatilho===0 ? "selected" : "" %>>0 - Nenhum
+                                        </option>
+                                        <option value="1" <%=campanha.gatilho===1 ? "selected" : "" %>>1 - WPP para
+                                            Usuário (sem mídia)</option>
+                                        <option value="2" <%=campanha.gatilho===2 ? "selected" : "" %>>2 - WPP para
+                                            Anunciante</option>
+                                        <option value="3" <%=campanha.gatilho===3 ? "selected" : "" %> >3 - WPP
+                                            para Usuário (com mídia)</option>
+                                        <option value="4" <%=campanha.gatilho===4 ? "selected" : "" %> disabled>4 - WPP
+                                            Anunciante + Usuário</option>
+                                    </select>
+                                </div>
+
+                                <div class="card mensagem-personalizada bg-light mb-3">
+                                    <div class="card-header">
+                                        <div class="card-title">Mensagem personalizada Whatsapp | Usuário</div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            <label for="basic-url">Mensagem Personalizada</label>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <button class="btn btn-outline-secondary dropdown-toggle"
+                                                        type="button" data-toggle="dropdown" aria-haspopup="true"
+                                                        aria-expanded="false">Olá, [Usuário]! Gostaria de
+                                                        informar</button>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="#">Olá, [Usuário]! Gostaria de
+                                                            informar</a>
+                                                        <a class="dropdown-item" href="#">Oláa, [Usuário]! Gostaria de
+                                                            informar</a>
+
+                                                    </div>
+                                                </div>
+
+                                                <input name="mensagem_personalizada"
+                                                    aria-label="Text input with dropdown button" class="form-control"
+                                                    type="text" placeholder="Insira o texto personalizado"
+                                                    value="<%= campanha.mensagem_personalizada %>">
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="basic-url">URL do criativo</label>
+                                            <input name="url_criativo" class="form-control" type="text"
+                                                placeholder="Insira o link do criativo"
+                                                value="<%= campanha.url_criativo %>">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                        </div>
+                    </div>
+
+                    <button id="updateButton" type="submit" class="btn btn-primary">Atualizar</button>
+                    </form>
+
+                    <!-- Botão para Excluir o Veículo -->
+                    <button id="deleteButton" class="btn btn-danger mt-3" disabled>Excluir campanha</button>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <div id="alertContainer" class="alert-container"></div>
+
+        <!-- Scripts Bootstrap e jQuery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+        <script>
+            function copyHash() {
+                var hashInput = document.getElementById("hashInput");
+                hashInput.select();
+                document.execCommand("copy");
+
+                var copyButton = document.getElementById("copyButton");
+                copyButton.setAttribute("data-original-title", "Copiado para a área de transferência");
+                $(copyButton).tooltip("show");
+                setTimeout(function () {
+                    $(copyButton).tooltip("hide");
+                }, 2000);
+            }
+
+            $(document).ready(function () {
+                // Captura o evento de envio do formulário de atualização da campanha
+                $('#editForm').submit(function (event) {
+                    event.preventDefault(); // Evita o envio tradicional do formulário
+
+                    var formData = $(this).serialize(); // Serializa os dados do formulário
+
+                    // Envia a requisição AJAX para atualizar a campanha
+                    $.ajax({
+                        url: $(this).attr('action'),
+                        type: 'POST',
+                        data: formData,
+                        success: function (response) {
+                            // Exibe uma mensagem de sucesso no rodapé
+                            var successMessage = $('<div>').addClass('alert alert-success')
+                                .text(response.message)
+                                .css({
+                                    'position': 'fixed',
+                                    'bottom': '20px',
+                                    'left': '20px',
+                                    'right': '20px',
+                                    'z-index': '9999'
+                                })
+                                .appendTo('#alertContainer');
+
+                            // Desaparece gradativamente após 4 segundos
+                            successMessage.fadeOut(4000, function () {
+                                $(this).remove();
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            // Exibe uma mensagem de erro no rodapé
+                            var errorMessage = $('<div>').addClass('alert alert-danger')
+                                .text(xhr.responseJSON.error)
+                                .css({
+                                    'position': 'fixed',
+                                    'bottom': '20px',
+                                    'left': '20px',
+                                    'right': '20px',
+                                    'z-index': '9999'
+                                })
+                                .appendTo('#alertContainer');
+
+                            // Desaparece gradativamente após 4 segundos
+                            errorMessage.fadeOut(4000, function () {
+                                $(this).remove();
+                            });
+                        }
+                    });
+                });
+            });
+        </script>
+</body>
+
+</html>

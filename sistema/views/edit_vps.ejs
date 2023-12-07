@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('header.ejs') %>
+</head>
+
+<body>
+    <%- include('navbar.ejs') %>
+
+    <div class="container">
+        <div class="row">
+            
+            <!-- Menu Lateral -->
+            <div class="col-lg-3">
+                <%- include('menu.ejs') %>
+            </div>
+
+            <!-- Formulário de Edição do Veículo -->
+            <div class="col-lg-9">
+                <h2>Editar VPS</h2>
+                <div class="card">
+                    <div class="card-header bg-info text-white">Dados gerais da VPS</div>
+                    <div class="card-body">
+                        <form id="editForm" action="/vps/update/<%= vps.id %>" method="post">
+                            <div class="form-group">
+                                <label>Identificação</label>
+                                <input type="text" class="form-control" name="nome" value="<%= vps.nome %>" >
+                            </div>
+                            <div class="form-group">
+                                <label>IP VPS</label>
+                                <input type="text" class="form-control" name="ip" value="<%= vps.ip %>">
+                            </div>
+                            <div class="form-group">
+                                <label>hash</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="hash" id="hashInput" value="<%= vps.hash %>" disabled required>
+                                    <div class="input-group-append">
+                                        <!-- <button type="button" class="btn btn-primary" onclick="generateHash()">Gerar</button> -->
+                                        <button type="button" class="btn btn-secondary" onclick="copyHash()" data-toggle="tooltip" data-placement="top" title="Copiar para a área de transferência" id="copyButton">Copiar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Status da VPS</label>
+                                <select class="form-control" name="status" required>
+                                    <option value="ativo" <%= vps.status === 'ativo' ? 'selected' : '' %>>Ativo</option>
+                                    <option value="implementando" <%= vps.status === 'implementando' ? 'selected' : '' %>>Implementando</option>
+                                    <option value="inativo" <%= vps.status === 'inativo' ? 'selected' : '' %>>Inativo</option>
+                                    <option value="encerrado" <%= vps.status === 'encerrado' ? 'selected' : '' %>>Encerrado</option>
+                                </select>
+                            </div>
+                            <button id="updateButton" type="submit" class="btn btn-primary">Atualizar</button>
+                        </form>
+
+                        <!-- Botão para Excluir o Veículo -->
+                        <button id="deleteButton" class="btn btn-danger mt-3">Excluir VPS</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="alertContainer" class="alert-container"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    
+
+    <script>
+
+        function copyHash() {
+            var hashInput = document.getElementById("hashInput");
+            hashInput.select();
+            document.execCommand("copy");
+
+            var copyButton = document.getElementById("copyButton");
+            copyButton.setAttribute("data-original-title", "Copiado para a área de transferência");
+            $(copyButton).tooltip("show");
+            setTimeout(function () {
+                $(copyButton).tooltip("hide");
+            }, 2000);
+        }
+
+        $(document).ready(function() {
+
+            // Captura o evento de envio do formulário de atualização do veículo
+            $('#editForm').submit(function(event) {
+                event.preventDefault(); // Evita o envio tradicional do formulário
+
+                var formData = $(this).serialize(); // Serializa os dados do formulário
+
+                // Envia a requisição AJAX para atualizar o veículo
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        // Exibe uma mensagem de sucesso no rodapé
+                        var successMessage = $('<div>').addClass('alert alert-success')
+                            .text(response.message)
+                            .css({
+                                'position': 'fixed',
+                                'bottom': '20px',
+                                'left': '20px',
+                                'right': '20px',
+                                'z-index': '9999'
+                            })
+                            .appendTo('#alertContainer');
+
+                        // Desaparece gradativamente após 4 segundos
+                        successMessage.fadeOut(4000, function() {
+                            $(this).remove();
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        // Exibe uma mensagem de erro no rodapé
+                        var errorMessage = $('<div>').addClass('alert alert-danger')
+                            .text(xhr.responseJSON.error)
+                            .css({
+                                'position': 'fixed',
+                                'bottom': '20px',
+                                'left': '20px',
+                                'right': '20px',
+                                'z-index': '9999'
+                            })
+                            .appendTo('#alertContainer');
+
+                        // Desaparece gradativamente após 4 segundos
+                        errorMessage.fadeOut(4000, function() {
+                            $(this).remove();
+                        });
+                    }
+                });
+            });
+
+            // Captura o evento de clique no botão de exclusão do veículo
+            $('#deleteButton').click(function() {
+                if (confirm('Deseja realmente excluir a VPS?')) {
+                    // Envia a requisição AJAX para excluir a vps
+                    $.ajax({
+                        url: '/vps/delete/<%= vps.id %>',
+                        type: 'POST',
+                        success: function(response) {
+                            // Redireciona para a página da vps
+                            window.location.href = '/vps';
+                        },
+                        error: function(xhr, status, error) {
+                            // Exibe uma mensagem de erro no rodapé
+                            var errorMessage = $('<div>').addClass('alert alert-danger')
+                                .text(xhr.responseJSON.error)
+                                .css({
+                                    'position': 'fixed',
+                                    'bottom': '20px',
+                                    'left': '20px',
+                                    'right': '20px',
+                                    'z-index': '9999'
+                                })
+                                .appendTo('#alertContainer');
+
+                            // Desaparece gradativamente após 4 segundos
+                            errorMessage.fadeOut(4000, function() {
+                                $(this).remove();
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+
+        vps.forEach(function(vps) {
+    // Verifica o status do veículo e atribui a classe CSS correspondente
+    switch (vps.status) {
+        case 'ativo':
+            vps.statusClass = 'active';
+            break;
+        case 'implementando':
+            vps.statusClass = 'implementando';
+            break;
+        case 'inativo':
+            vps.statusClass = 'inativo';
+            break;
+        case 'encerrado':
+            vps.statusClass = 'encerrado';
+            break;
+        default:
+            vps.statusClass = '';
+            break;
+    }
+});
+    </script>
+</body>
+
+</html>

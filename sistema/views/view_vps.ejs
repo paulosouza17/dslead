@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('header.ejs') %>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <a class="navbar-brand" href="#">DS Lead</a>
+    </nav>
+
+
+    <div class="row">
+        <!-- Menu Lateral -->
+        <div class="col-lg-3">
+            <%- include('menu.ejs') %>
+        </div>
+
+        <!-- Formulário de Edição do Veículo -->
+        <div class="col-lg-9">
+            <div class="card">
+                <div class="card-header bg-info text-white">Visualizar informações da VPS</div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <th>Identificação</th>
+                            <th>IP VPS</th>
+                            <th>Hash</th>
+                            <th>Status da VPS</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <%= vps.nome %>
+                            </td>
+                            <td>
+                                <%= vps.ip %>
+                            </td>
+                            <td>
+                                <%= vps.hash %>
+                            </td>
+                            <td>
+                                <%= vps.status %>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div id="alertContainer" class="alert-container"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
+</body>
+
+</html>

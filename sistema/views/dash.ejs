@@ -1,0 +1,70 @@
+<!-- views/dash.ejs -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('header.ejs') %>
+</head>
+
+<body>
+    <%- include('navbar.ejs') %>
+
+        <div class="container">
+            <div class="row">
+                <!-- Menu Lateral -->
+                <div class="col-lg-3">
+                    <%- include('menu.ejs') %>
+                </div>
+
+                <!-- Formulário de Registro -->
+                <div class="col-lg-9">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">Dashboard - Status de VPS</div>
+                        <div class="card-body">
+                            <% if (veiculos.length> 0 && veiculos[0].ip_vps) { %>
+                                <% for (let i=0; i < veiculos.length; i++) { %>
+                                    <% if (i % 3===0) { %>
+                                        <div class="row">
+                                            <% } %>
+
+                                                <div class="col-md-4">
+                                                    <div class="card mb-3">
+                                                        <div class="card-body">
+                                                            <h5 class="card-title">
+                                                                <%= veiculos[i].nome %>
+                                                            </h5>
+                                                            <p class="card-text">
+                                                                <strong>IP VPS:</strong>
+                                                                <%= veiculos[i].ip_vps %><br>
+                                                                    <strong>Status do Servidor:</strong>
+                                                                    <%= veiculos[i].status %><br>
+                                                                        <strong>Modelo do Servidor:</strong>
+                                                                        <%= veiculos[i].modelo_servidor %><br>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <% if (i % 3===2 || i===veiculos.length - 1) { %>
+                                        </div>
+                                        <% } %>
+                                            <% } %>
+                                                <% } else { %>
+                                                    <p>Nenhum veículo cadastrado com informações de IP VPS.</p>
+                                                    <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <script>
+            $(function () {
+                $("#menuContainer").load("menu.html");
+            });
+        </script>
+</body>
+
+</html>

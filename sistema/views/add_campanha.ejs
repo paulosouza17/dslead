@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('header.ejs') %>
+        <style>
+
+        </style>
+</head>
+
+<body>
+    <%- include('navbar.ejs') %>
+
+        <div class="container">
+            <div class="row">
+                <!-- Menu Lateral -->
+                <div class="col-lg-3">
+                    <%- include('menu.ejs') %>
+                </div>
+
+                <!-- Formulário de Registro -->
+                <div class="col-lg-9">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">Cadastrar Campanha</div>
+                        <div class="card-body">
+                            <form id="addcampanha" action="register" method="post">
+                                <div class="form-group">
+                                    <label>Nome da Campanha</label>
+                                    <input type="text" class="form-control" name="nome_campanha" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Cliente</label>
+                                    <input type="text" class="form-control" name="nome_cliente">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Escolha o Gatilho</label>
+                                    <select class="form-control gatilho" name="gatilho">
+                                        <option value="" disabled hidden>Selecione uma opção</option>
+                                        <option value="0" >0 - Nenhum
+                                        </option>
+                                        <option value="1" >1 - WPP para
+                                            Usuário (sem mídia)</option>
+                                        <option value="2" >2 - WPP para
+                                            Anunciante</option>
+                                        <option value="3">3 - WPP
+                                            para Usuário (com mídia)</option>
+                                        <option value="4"  disabled>4 - WPP
+                                            Anunciante + Usuário</option>
+                                    </select>
+                                </div>
+
+                                <div class="card mensagem-personalizada bg-light mb-3">
+                                    <div class="card-header">
+                                        <div class="card-title">Mensagem personalizada Whatsapp | Usuário</div>
+                                    </div>
+                                    <div class="card-body">
+
+                                        <div class="form-group">
+                                            <label for="basic-url">Mensagem Personalizada</label>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <button class="btn btn-outline-secondary dropdown-toggle"
+                                                        type="button" data-toggle="dropdown" aria-haspopup="true"
+                                                        aria-expanded="false">Olá, [Usuário]! Gostaria de
+                                                        informar</button>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="#">Olá, [Usuário]! Gostaria de
+                                                            informar</a>
+
+                                                    </div>
+                                                </div>
+                                                
+                                                <input name="mensagem_personalizada"
+                                                    aria-label="Text input with dropdown button" class="form-control"
+                                                    type="text" placeholder="Insira o texto personalizado"
+                                                    value="">
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="basic-url">URL do criativo</label>
+                                            <input name="url_criativo" class="form-control" type="text"
+                                                placeholder="Insira o link do criativo"
+                                                value="">
+                                        </div>
+                                    </div>
+                                </div>
+                    </div>
+                    <button id="updateButton" type="submit" class="btn btn-primary">Cadastrar</button>
+                    </form>
+
+                    <!-- Botão para Excluir o Veículo -->
+                    <!-- <button id="deleteButton" class="btn btn-danger mt-3">Excluir Veículo</button> -->
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <div id="alertContainer" class="alert-container"></div>
+
+        <!-- Scripts Bootstrap e jQuery -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <script>
+            $(function () {
+                // Captura o evento de envio do formulário
+                $('#addcampanha').submit(function (event) {
+                    event.preventDefault(); // Evita o envio tradicional do formulário
+
+                    var formData = $(this).serialize(); // Serializa os dados do formulário
+
+                    // Envia a requisição AJAX
+                    $.ajax({
+                        url: $(this).attr('action'),
+                        type: 'POST',
+                        data: formData,
+                        success: function (response) {
+                            showResponseMessage(response.message, 'success');
+                            window.location.href = '/campanhas';
+                            // Outras ações após o sucesso
+                        },
+                        error: function (xhr, status, error) {
+                            showResponseMessage(xhr.responseJSON.error, 'error');
+                            window.location.href = '/campanhas';
+                            // Outras ações após o erro
+                        }
+                    });
+                });
+
+                function showResponseMessage(message, type) {
+                    var alertClass = (type === 'success') ? 'alert-success' : 'alert-danger';
+
+                    var alertMessage = $('<div>').addClass('alert ' + alertClass)
+                        .text(message)
+                        .css({
+                            'position': 'fixed',
+                            'bottom': '20px',
+                            'left': '20px',
+                            'right': '20px',
+                            'z-index': '9999',
+                            'margin-bottom': '20px'
+                        })
+                        .appendTo('#alertContainer');
+
+                    // Desaparece gradativamente após 4 segundos
+                    alertMessage.delay(4000).fadeOut(1000, function () {
+                        $(this).remove();
+                    });
+                }
+            });
+        </script>
+</body>
+
+</html>

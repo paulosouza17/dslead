@@ -1,0 +1,37 @@
+CREATE TABLE cliente (
+    id_cliente UUID PRIMARY KEY,
+    nome_cliente VARCHAR(255) NOT NULL,
+    tel_cliente VARCHAR(20),
+    autorizado BOOLEAN
+);
+
+CREATE TABLE campanha (
+    id_campanha UUID PRIMARY KEY,
+    campanha VARCHAR(255) NOT NULL,
+    id_cliente UUID REFERENCES cliente(id_cliente),
+    data_inicio DATE,
+    data_final DATE
+);
+
+CREATE TABLE criativo (
+    id_criativo UUID PRIMARY KEY,
+    criativo VARCHAR(255) NOT NULL,
+    id_campanha UUID REFERENCES campanha(id_campanha),
+    id_cliente UUID REFERENCES cliente(id_cliente)
+);
+
+CREATE TABLE usuario (
+    id_usuario UUID PRIMARY KEY,
+    nome_usuario VARCHAR(255) NOT NULL,
+    telefone VARCHAR(20) NOT NULL,
+    email VARCHAR(255)
+);
+
+CREATE TABLE acoes (
+    id_acao UUID PRIMARY KEY,
+    id_criativo UUID REFERENCES criativo(id_criativo),
+    id_campanha UUID REFERENCES campanha(id_campanha),
+    id_usuario UUID REFERENCES usuario(id_usuario),
+    id_cliente UUID REFERENCES cliente(id_cliente),
+    local VARCHAR(255)
+);

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('header.ejs') %>
+    </head>
+<body>
+    <%- include('navbar.ejs') %>
+
+    
+        <div class="row">
+            <!-- Menu Lateral -->
+            
+            <div class="col-lg-3">
+                <%- include('menu.ejs') %>
+            </div>
+            
+
+            <!-- Formulário de Registro -->
+            <div class="col-lg-9">
+                <div class="card">
+                    <div class="card-header bg-info text-white">Lista de Anunciantes</div>
+                    <div class="card-body">
+                        <ul class="block-list">
+                            <% anunciantes.forEach(function(anunciante) { %>
+                                <li>
+                                    <h3><%= anunciante.nome %></h3>
+                                    <p>Status: <%= anunciante.status %></p>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        $(function () {
+            $("#menuContainer").load("menu.html");
+        });
+    </script>
+</body>
+</html>
+
